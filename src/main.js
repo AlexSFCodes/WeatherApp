@@ -27,7 +27,7 @@ async function getWeather() {
         
         const { latitude, longitude, name, country } = geoData.results[0];
         
-        // PASO 2: Obtener clima
+        // Second step: Get the weather
         const weatherRes = await fetch(
             `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`
         );
