@@ -1,9 +1,13 @@
-import { Favorite } from '../models/favorite.model.js';
+import { Favorite } from '../models/favorites.model';
 
 const favorites = [];
 
+
 export const addFavorite = (favorite) => {
-    favorites.push(favorite);
+    if (favorites.length >= 3) {
+        favorites.shift(); // Saca el más antiguo
+    }
+    favorites.push(favorite); // Agrega el nuevo
     saveToLocalStorage();
 };
 
