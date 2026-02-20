@@ -1,22 +1,25 @@
+import { weatherService } from '../services/weather.service.js';
+
 export class Favorite {
     constructor(name, country, latitude, longitude) {
         this.name = name;
         this.country = country;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.currently_temp = null; // Temperatura actual
-        this.lastUpdate = null; // Última vez que se actualizó
+        this.currently_temp = null;
+        this.lastUpdate = null;
+        this.intervalId = null;
     }
 
-    
+    // Actualizar temperatura usando el servicio
     async updateTemperature() {
         try {
-            const response = await fetch(
-                `https://api.openweathermap.org/data/2.5/weather?lat=${this.latitude}&lon=${this.longitude}&appid=TU_API_KEY&units=metric`
+            const weather = await weatherService.getCurrentWeather(
+                this.latitude, 
+                this.longitude
             );
-            const data = await response.json();
             
-            this.currently_temp = data.main.temp;
+            this.currently_temp = weather.temperature;
             this.lastUpdate = new Date();
             
             return this.currently_temp;
@@ -26,15 +29,21 @@ export class Favorite {
         }
     }
 
+    // Iniciar actualizaciones automáticas
     startAutoUpdate(intervalMinutes = 10) {
+        // Actualizar inmediatamente
         this.updateTemperature();
         
-        const intervalMs = intervalMinutes * 60 * 1000; 
+        // Convertir minutos a milisegundos
+        const intervalMs = intervalMinutes * 60 * 1000;
+        
+        // Programar actualizaciones periódicas
         this.intervalId = setInterval(() => {
             this.updateTemperature();
         }, intervalMs);
     }
 
+    // Detener actualizaciones automáticas
     stopAutoUpdate() {
         if (this.intervalId) {
             clearInterval(this.intervalId);
